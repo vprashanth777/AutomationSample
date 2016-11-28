@@ -9,14 +9,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 
 /**
@@ -25,11 +32,24 @@ import javax.mail.internet.MimeMessage;
  */
 public class App 
 {
-    public static void main( String[] args ) throws Exception
+  
+	public static void main( String[] args ) throws Exception
     {
-    	Properties P;
+    	Properties P,TestDataproperties = new Properties();
+    	 FileInputStream fis;
+    	try {
+			fis = new FileInputStream("Data/TestProperties.xml");
+			TestDataproperties.loadFromXML(fis);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	String BrowserType=TestDataproperties.getProperty("BrowserType");
+    	String URL=TestDataproperties.getProperty("URL");
+    	
+    	String filename="target/CucumberReport.html";
     	P = new Properties();
-		 FileInputStream fis;
+	
 		try {
 			fis = new FileInputStream("Data/EmailProperties.xml");
 			 P.loadFromXML(fis);
@@ -59,22 +79,35 @@ public class App
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));  
             message.setSubject(subject); 
             
-            String content = "";
-            try {
-                BufferedReader in = new BufferedReader(new FileReader("target/CucumberReport.html"));
-                String str;
-                while ((str = in.readLine()) != null) {
-                    content +=str;
-                }
-                in.close();
-            } catch (IOException e) {
-            }
+            String content="Hi All,"  + System.lineSeparator() + System.lineSeparator() +
+            		"Please find the Automation execution summary for as an attachment and Below are the Execution Details" + System.lineSeparator() +System.lineSeparator() + 
+            		"Browser Name =" +BrowserType 
+            		+ System.lineSeparator() + System.lineSeparator() +"URL =" +URL + System.lineSeparator() + System.lineSeparator() +"Thank you," + System.lineSeparator() + System.lineSeparator() + "GQA Automation team."
+            		+ System.lineSeparator() + System.lineSeparator() + "Note: Please Use Chrome browser for attached result view for better experiance";
             
-            message.setContent(
-            		content,
-                   "text/html");
-     
-            // Send message  
+        
+            BodyPart messageBodyPart = new MimeBodyPart();
+          
+            // Now set the actual message
+            messageBodyPart.setText(content);
+            
+            // Create a multipar message
+            Multipart multipart = new MimeMultipart();
+
+            // Set text message part
+            multipart.addBodyPart(messageBodyPart);
+
+            // Part two is attachment
+            messageBodyPart = new MimeBodyPart();
+          
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+
+            // Send the complete message parts
+            message.setContent(multipart,"text/html");
+
             Transport.send(message);  
             System.out.println("message sent successfully....");  
      
