@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<!-- Use URL for BrowserStack capability information https://www.browserstack.com/automate/java -->
+
+<properties>
+	<entry key = "BrowserType">BrowserStack</entry>
+	<entry key = "Environment">Windows</entry>
+	<entry key = "URL">http://rpl.gqaustralia.com.au</entry>
+	<entry key = "CandidateUserName">prashanth.veldandi@valuelabs.com</entry>
+	<entry key = "CandidatePassword">12345678q</entry>
+	<entry key = "FacilitatorUserName">rama.kamsali@valuelabs.com</entry>
+	<entry key = "FacilitatorPassword">testing99</entry>
+	<entry key = "AssessorUserName">sarath.jampani@valuelabs.com</entry>
+	<entry key = "AssessorPassword">12345678q</entry>
+	
+	
+	
+</properties>
